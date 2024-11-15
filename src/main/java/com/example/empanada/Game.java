@@ -20,5 +20,8 @@ public class Game {
 
     @Transient
     private String fileBase64;
+
+    @Transient
+    private String fileMimeType;
     
 }
