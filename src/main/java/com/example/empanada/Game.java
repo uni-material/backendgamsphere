@@ -1,6 +1,7 @@
 package com.example.empanada;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -16,5 +17,8 @@ public class Game {
     public String title;
     public String developer;
     private byte[] file;
+
+    @Transient
+    private String fileBase64;
     
 }

@@ -6,14 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+//import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.Base64;
+
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RequestMapping("/game")
 public class GameController {
 
@@ -21,14 +24,30 @@ public class GameController {
     private GameRepository gameRepository;
 
     @GetMapping("/")
-    List<Game> getAllGames(){
-        return gameRepository.findAll();
+    public List<Game> getAllGames(){
+        List<Game> games = gameRepository.findAll();
+        games.forEach(game->{
+            if(game.getFile() != null){
+                game.setFileBase64(Base64.getEncoder().encodeToString(game.getFile()));
+            }
+        });
+
+        return games;
     }
 
     @GetMapping("/{id}")
-    Game getGame(@PathVariable String id){
-        return gameRepository.findById(id).orElse(null);
+    public Game getGame(@PathVariable String id){
+        Game game = gameRepository.findById(id).orElse(null);
+
+        if(game!= null && game.getFile()!=null){
+            game.setFileBase64(Base64.getEncoder().encodeToString(game.getFile()));
+        }
+
+        return game;
     }
+
+
+
     
     @PostMapping("/")
     Game addGame(
@@ -43,5 +62,15 @@ public class GameController {
         return gameRepository.save(game);
     }
 
+    /*@GetMapping("/")
+    public List<Game> getAlGames(){
+        return gameRepository.findAll().stream().map(game -> {
+            if(game.getFile() != null){
+                String base64File = Base64.getEncoder().encodeToString(game.getFile());
+                game.setFile(base64File.getBytes());
+            }
+            return game;
+        }).collect(Collectors.toList());
+    }*/
     
 }
